@@ -29,3 +29,7 @@ keygenerate:
 
 redis-login:
 	docker exec -it server_redis_1 redis-cli
+
+add-local-host-alias:
+	sudo sed -i /lmw.local.com/d /etc/hosts
+	echo "127.0.0.1 lmw.local.com" | sudo tee -a /etc/hosts >/dev/null
