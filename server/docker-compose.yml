@@ -1,0 +1,43 @@
+version: '3'
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx.dockerfile
+    depends_on:
+      - web
+      - redis
+    container_name: nginx-lmw1
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./lmw/:/var/www/html
+    networks:
+      - my-network
+    environment:
+      - NGINX_HOST=lmw.local.com
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./lmw/:/var/www/html
+    environment:
+      - APP_ENV=local
+    networks:
+      - my-network
+    depends_on:
+      - redis
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - my-network
+
+networks:
+  my-network:
+    external: true
