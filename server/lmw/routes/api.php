@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RealTimeController;
+use App\Http\Controllers\Api\UserController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,3 +20,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('/realtime-test-event', [RealTimeController::class, 'realtimeTestEvent']);
+
+Route::prefix('customers')->group(function () {
+    Route::post('/', [UserController::class, 'store']);
+    /*
+      request body
+        {
+
+        }
+
+     */
+    Route::get('/', [UserController::class, 'getCustomerWithUserInfo']);
+    Route::put('/{id}', [UserController::class, 'update']);
+    Route::delete('/{id}', [UserController::class, 'destroy']);
+});
