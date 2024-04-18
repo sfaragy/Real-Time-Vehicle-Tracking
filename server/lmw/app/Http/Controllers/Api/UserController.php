@@ -7,18 +7,27 @@ use App\Models\Customer;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 /**
  * This class will allow customers to create account and will get the permission to create order.
  */
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        auth()->setDefaultDriver('api');
+    }
+
     /**
      * @param Request $request
      * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function register(Request $request): JsonResponse
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -30,7 +39,7 @@ class UserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->password),
+            'password' => Hash::make($request->password),
         ]);
 
         $customerUUID = Str::uuid();
@@ -101,6 +110,51 @@ class UserController extends Controller
     }
 
     /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function login(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email',
+            'password' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $user = User::where('email', $request->email)->first();
+
+        if ($user && Hash::check($request->password, $user->password)) {
+            $token = JWTAuth::fromUser($user);
+
+        } else {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        return $this->respondWithToken($token);
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function logout(): JsonResponse
+    {
+        $removeToken = JWTAuth::invalidate(JWTAuth::getToken());
+        if($removeToken){
+            return response()->json([
+                'message' => 'Successfully logged out',
+            ]);
+        }else{
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed logged out',
+            ], 409);
+        }
+    }
+
+    /**
      * Remove the specified resource from storage.
      * @param $id
      * @return JsonResponse
@@ -120,5 +174,34 @@ class UserController extends Controller
         $customer->delete();
 
         return response()->json(['message' => 'Customer deleted successfully']);
+    }
+    /**
+     * Refresh a token.
+     *
+     * @return JsonResponse
+     */
+    public function refresh(): JsonResponse
+    {
+        return $this->respondWithToken(auth()->refresh());
+    }
+
+    /**
+     * Get the token array structure.
+     *
+     * @param  string $token
+     *
+     * @return JsonResponse
+     */
+    protected function respondWithToken($token): JsonResponse
+    {
+        if($token){
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                'expires_in' => auth()->factory()->getTTL() * 60
+            ]);
+        }
+
+        return response()->json(['error' => 'Unauthorized'], 401);
     }
 }
