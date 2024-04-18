@@ -182,7 +182,13 @@ class UserController extends Controller
      */
     public function refresh(): JsonResponse
     {
-        return $this->respondWithToken(auth()->refresh());
+        $user = Auth::user();
+        if($user){
+            $newToken = Auth::refresh();
+            return response()->json(['token' => $newToken]);
+        }
+
+        return response()->json(['error' => 'Unauthorized'], 401);
     }
 
     /**
