@@ -96,11 +96,12 @@ class UserController extends Controller
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @return JsonResponse
      */
-    public function getCustomer($id): JsonResponse
+    public function getCustomer(string $id): JsonResponse
     {
+        $this->isAuthorized();
         $customer = Customer::with('user')->find($id);
 
         if (!$customer) {
@@ -210,5 +211,16 @@ class UserController extends Controller
         }
 
         return response()->json(['error' => 'Unauthorized'], 401);
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    private function isAuthorized(): JsonResponse
+    {
+        $user = auth()->user();
+        if($user){
+            return response()->json(['message' => 'Unauthenticated'], 404);
+        }
     }
 }

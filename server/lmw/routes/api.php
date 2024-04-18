@@ -21,12 +21,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/realtime-test-event', [RealTimeController::class, 'realtimeTestEvent']);
 
-Route::prefix('customers')->group(function () {
-    Route::post('/', [UserController::class, 'register']);
+Route::post('/auth/register', [UserController::class, 'register']);
+
+Route::prefix('auth')->group(function () {
     Route::post('/login', [UserController::class, 'login']);
     Route::post('/logout', [UserController::class, 'logout']);
     Route::get('/refresh', [UserController::class, 'refresh']);
+});
 
+/* @TODO Need to improve */
+Route::prefix('customer')->group(function () {
     Route::get('/{id}', [UserController::class, 'getCustomer']);
     Route::put('/{id}', [UserController::class, 'update']);
     Route::delete('/{id}', [UserController::class, 'destroy']);
