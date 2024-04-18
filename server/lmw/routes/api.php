@@ -23,14 +23,7 @@ Route::post('/realtime-test-event', [RealTimeController::class, 'realtimeTestEve
 
 Route::prefix('customers')->group(function () {
     Route::post('/', [UserController::class, 'store']);
-    /*
-      request body
-        {
-
-        }
-
-     */
-    Route::get('/', [UserController::class, 'getCustomerWithUserInfo']);
+    Route::get('/{id}', [UserController::class, 'getCustomerWithUserInfo']);
     Route::put('/{id}', [UserController::class, 'update']);
     Route::delete('/{id}', [UserController::class, 'destroy']);
 });
