@@ -34,7 +34,7 @@ class UserController extends Controller
         ]);
 
         $customerUUID = Str::uuid();
-        dd($user);
+
         $customer = new Customer([
             'id' => $customerUUID,
             'latitude' => $request->customer_data['latitude'] ?? 0,
@@ -48,46 +48,48 @@ class UserController extends Controller
 
     /**
      * Update the specified resource in storage.
+     *
      * @param Request $request
-     * @param string $id
+     * @param $id
      * @return JsonResponse
      */
-    public function update(Request $request, string $id): JsonResponse
+    public function update(Request $request, $id): JsonResponse
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'password' => 'nullable|string|min:6',
-            'customer_data' => 'required|array',
         ]);
 
-        $user = User::find($id);
+        $customer = Customer::find($id);
 
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+        if (!$customer) {
+            return response()->json(['message' => 'Customer not found'], 404);
         }
 
-        $user->name = $request->name;
-        $user->email = $request->email;
+        $customer->update([
+            'longitude' => $request->customer_data['longitude'] ?? 0,
+            'latitude' => $request->customer_data['latitude'] ?? 0,
+        ]);
+
+        $userData = [
+            'name'      => $request->name,
+        ];
 
         if ($request->has('password')) {
-            $user->password = bcrypt($request->password);
+            $userData['password'] = bcrypt($request->password);
         }
 
-        $user->save();
+        if ($customer->user) {
+            $customer->user->update($userData);
+        }
 
-        $customer = $user->customer;
-        $customer->fill($request->customer_data);
-        $customer->save();
-
-        return response()->json(['message' => 'User updated successfully']);
+        return response()->json(['message' => 'Customer account updated successfully'], 200);
     }
 
     /**
      * @param $id
      * @return JsonResponse
      */
-    public function getCustomerWithUserInfo($id): JsonResponse
+    public function getCustomer($id): JsonResponse
     {
         $customer = Customer::with('user')->find($id);
 
@@ -105,14 +107,18 @@ class UserController extends Controller
      */
     public function destroy($id): JsonResponse
     {
-        $user = User::find($id);
+        $customer = Customer::find($id);
 
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+        if (!$customer) {
+            return response()->json(['message' => 'Customer not found'], 404);
         }
 
-        $user->delete();
+        if ($customer->user) {
+            $customer->user->delete();
+        }
 
-        return response()->json(['message' => 'User deleted successfully']);
+        $customer->delete();
+
+        return response()->json(['message' => 'Customer deleted successfully']);
     }
 }
