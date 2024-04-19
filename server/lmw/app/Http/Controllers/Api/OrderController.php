@@ -36,4 +36,18 @@ class OrderController extends Controller
             return response()->json(['message' => 'Failed to create order'], 500);
         }
     }
+
+    /**
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getOrder(int $id): JsonResponse
+    {
+        $order = $this->orderService->getOrder($id);
+        if ($order) {
+            return response()->json([$order], 201);
+        } else {
+            return response()->json(['message' => 'Failed to get the order'], 500);
+        }
+    }
 }

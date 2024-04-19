@@ -51,4 +51,5 @@ Route::group(
 
 Route::prefix('order')->group(function () {
     Route::post('/', [OrderController::class, 'create']);
+    Route::get('/{id}', [OrderController::class, 'getOrder']);
 });

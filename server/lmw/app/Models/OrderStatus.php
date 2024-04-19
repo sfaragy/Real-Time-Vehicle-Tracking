@@ -31,4 +31,12 @@ class OrderStatus extends Authenticatable
     {
         return $this->belongsTo(Driver::class);
     }
+
+    /**
+     * @return BelongsTo
+     */
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class);
+    }
 }

@@ -5,6 +5,8 @@ namespace App\Services\Api;
 use App\Enum\OrderStatusEnum;
 use App\Models\Order;
 use App\Models\OrderStatus;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class OrderService
@@ -49,5 +51,16 @@ class OrderService
         ]);
 
         return $order->id;
+    }
+
+    /**
+     * @param int $order_id
+     * @return Order
+     */
+    public function getOrder(int $order_id): Order
+    {
+        return Order::with(['customer', 'orderStatus'])
+            ->where('orders.id', $order_id)
+            ->get()->first();
     }
 }
