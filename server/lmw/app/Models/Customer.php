@@ -3,17 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use MongoDB\Laravel\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * Customer Model
  */
-class Customer extends Model
+class Customer extends Authenticatable
 {
-
-    protected $connection = 'mongodb';
-
     use HasFactory;
     protected $collection="customers";
 

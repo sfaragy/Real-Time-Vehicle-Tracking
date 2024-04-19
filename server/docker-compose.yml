@@ -7,6 +7,7 @@ services:
     depends_on:
       - web
       - redis
+      - db
     container_name: nginx-lmw1
     ports:
       - 80:80
@@ -38,6 +39,23 @@ services:
     networks:
       - my-network
 
+  db:
+    image: postgres:latest
+    container_name: lmw_pgs
+    environment:
+      POSTGRES_DB: lmw_pgs
+      POSTGRES_USER: lmw_pgs
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    networks:
+      - my-network
+
 networks:
   my-network:
     external: true
+
+volumes:
+  pg-data:

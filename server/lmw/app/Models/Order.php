@@ -3,17 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use MongoDB\Laravel\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Order model.
  */
-class Order extends Model
+class Order extends Authenticatable
 {
     use HasFactory;
-
-    protected $connection = 'mongodb';
 
     protected $table = 'orders';
 
@@ -23,6 +21,7 @@ class Order extends Model
      * @var string[]
      */
     protected $fillable = [
+        'customer_id',
         'pickup_location',
         'delivery_location',
     ];

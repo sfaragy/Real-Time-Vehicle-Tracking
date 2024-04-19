@@ -20,8 +20,13 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install MongoDB PHP extension
-RUN pecl install mongodb \
-    && docker-php-ext-enable mongodb
+#RUN pecl install mongodb \
+#    && docker-php-ext-enable mongodb \
+
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    && docker-php-ext-install pdo_pgsql pgsql
+
 
 # Install Xdebug extension
 RUN pecl install xdebug \
