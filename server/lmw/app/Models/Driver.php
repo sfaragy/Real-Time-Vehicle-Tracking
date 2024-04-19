@@ -21,7 +21,14 @@ class Driver extends Authenticatable
     /**
      * @var string[]
      */
-    protected $fillable = ['home_location_point', 'driving_radius_miles'];
+    protected $fillable = ['driving_radius_miles'];
+
+    /**
+     * @var string[]
+     */
+    protected $casts = [
+        'home_location_point' => 'json',
+    ];
 
     /**
      * @return HasMany

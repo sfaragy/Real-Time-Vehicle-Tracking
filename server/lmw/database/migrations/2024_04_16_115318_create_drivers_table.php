@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('drivers', function (Blueprint $table) {
             $table->id();
-            $table->text('home_location_point')->nullable();
+            $table->json('home_location_point')->nullable();
             $table->float('driving_radius_miles')->nullable();
             $table->timestamps();
         });
