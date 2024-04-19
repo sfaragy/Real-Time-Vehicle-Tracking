@@ -8,13 +8,12 @@ use App\Models\Driver;
 class DriverSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Run the database seeds for Driver model.
      *
      * @return void
      */
     public function run()
     {
-
         $driversData = [
             [
                 'home_location_point' => [

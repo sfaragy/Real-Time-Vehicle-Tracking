@@ -43,10 +43,7 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $customerUUID = Str::uuid();
-
         $customer = new Customer([
-            'id' => $customerUUID,
             'latitude' => $request->customer_data['latitude'] ?? 0,
             'longitude' => $request->customer_data['longitude'] ?? 0,
         ]);
