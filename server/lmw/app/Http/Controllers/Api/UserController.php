@@ -20,8 +20,8 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
-        auth()->setDefaultDriver('api');
+//        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+//        auth()->setDefaultDriver('api');
     }
 
     /**
@@ -101,7 +101,7 @@ class UserController extends Controller
      */
     public function getCustomer(string $id): JsonResponse
     {
-        $this->isAuthorized();
+//        $this->isAuthorized();
         $customer = Customer::with('user')->find($id);
 
         if (!$customer) {

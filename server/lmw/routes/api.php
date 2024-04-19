@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\OrderController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RealTimeController;
@@ -23,15 +24,31 @@ Route::post('/realtime-test-event', [RealTimeController::class, 'realtimeTestEve
 
 Route::post('/auth/register', [UserController::class, 'register']);
 
-Route::prefix('auth')->group(function () {
-    Route::post('/login', [UserController::class, 'login']);
-    Route::post('/logout', [UserController::class, 'logout']);
-    Route::get('/refresh', [UserController::class, 'refresh']);
-});
+Route::group(
+    [
+//        'middleware' => 'api',
+        'prefix' => 'auth'
+    ],
+    function () {
+        Route::post('/login', [UserController::class, 'login']);
+        Route::post('/logout', [UserController::class, 'logout']);
+        Route::get('/refresh', [UserController::class, 'refresh']);
+    }
+);
 
 /* @TODO Need to improve */
-Route::prefix('customer')->group(function () {
-    Route::get('/{id}', [UserController::class, 'getCustomer']);
-    Route::put('/{id}', [UserController::class, 'update']);
-    Route::delete('/{id}', [UserController::class, 'destroy']);
+Route::group(
+    [
+//        'middleware' => 'api',
+        'prefix' => 'customer'
+    ],
+    function () {
+        Route::get('/{id}', [UserController::class, 'getCustomer']);
+        Route::put('/{id}', [UserController::class, 'update']);
+        Route::delete('/{id}', [UserController::class, 'destroy']);
+    }
+);
+
+Route::prefix('order')->group(function () {
+    Route::post('/', [OrderController::class, 'create']);
 });
