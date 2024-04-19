@@ -38,7 +38,7 @@ class Order extends Authenticatable
     /**
      * @return HasMany
      */
-    public function orderStatus(): HasMany
+    public function OrderStatus(): HasMany
     {
         return $this->hasMany(OrderStatus::class);
     }

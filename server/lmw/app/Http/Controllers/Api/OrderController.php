@@ -50,4 +50,18 @@ class OrderController extends Controller
             return response()->json(['message' => 'Failed to get the order'], 500);
         }
     }
+
+    /**
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function getOrderStatus(int $id): JsonResponse
+    {
+        $orderStatus = $this->orderService->getOrderStatus($id);
+        if ($orderStatus) {
+            return response()->json($orderStatus, 201);
+        } else {
+            return response()->json(['message' => 'Failed to get the order'], 500);
+        }
+    }
 }

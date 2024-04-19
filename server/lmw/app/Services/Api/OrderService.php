@@ -55,12 +55,26 @@ class OrderService
 
     /**
      * @param int $order_id
-     * @return Order
+     * @return Order|null
      */
-    public function getOrder(int $order_id): Order
+    public function getOrder(int $order_id): Order|null
     {
         return Order::with(['customer', 'orderStatus'])
             ->where('orders.id', $order_id)
             ->get()->first();
     }
+
+    /**
+     * @param int $order_id
+     * @return OrderStatus|null
+     */
+    public function getOrderStatus(int $order_id): OrderStatus|null
+    {
+        return OrderStatus::query()
+            ->where('order_id', $order_id)
+            ->select('order_status.status')
+            ->orderBy('created_at', 'desc')
+            ->get()->first();
+    }
+
 }
