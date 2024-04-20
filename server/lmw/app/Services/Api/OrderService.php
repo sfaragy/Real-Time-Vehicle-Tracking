@@ -3,10 +3,9 @@
 namespace App\Services\Api;
 
 use App\Enum\OrderStatusEnum;
+use App\Models\Driver;
 use App\Models\Order;
 use App\Models\OrderStatus;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class OrderService
@@ -54,27 +53,71 @@ class OrderService
     }
 
     /**
-     * @param int $order_id
+     * @param int $orderId
      * @return Order|null
      */
-    public function getOrder(int $order_id): Order|null
+    public function getOrder(int $orderId): Order|null
     {
         return Order::with(['customer', 'orderStatus'])
-            ->where('orders.id', $order_id)
+            ->where('orders.id', $orderId)
+            ->get()->first();
+    }
+
+    /**
+     * @param int $orderId
+     * @return OrderStatus|null
+     */
+    public function getOrderStatus(int $orderId): OrderStatus|null
+    {
+        return OrderStatus::query()
+            ->where('order_id', $orderId)
+            ->select('order_status.status', 'driver_id')
+            ->orderBy('created_at', 'desc')
             ->get()->first();
     }
 
     /**
      * @param int $order_id
-     * @return OrderStatus|null
+     * @param Request $request
+     * @return bool
      */
-    public function getOrderStatus(int $order_id): OrderStatus|null
+    public function addOrderStatus(int $order_id, Request $request): bool
     {
-        return OrderStatus::query()
-            ->where('order_id', $order_id)
-            ->select('order_status.status')
-            ->orderBy('created_at', 'desc')
-            ->get()->first();
+        $request->validate([
+            'status' => [
+                'required',
+            ],
+        ]);
+
+        $currentOrderStatus = $this->getOrderStatus($order_id);
+
+        $statusUpdate = false;
+
+        if(in_array($currentOrderStatus->status, [OrderStatusEnum::INITIATED->value, OrderStatusEnum::ASSIGNED->value])){
+            OrderStatus::create([
+                'order_id' => $order_id,
+                'driver_id' => $currentOrderStatus->driver_id,
+                'status' => $request->status,
+            ]);
+
+            $statusUpdate = true;
+        }
+
+
+        if(
+            in_array($request->status, [OrderStatusEnum::CANCELLED->value, OrderStatusEnum::DELIVERED->value]) ||
+            in_array($currentOrderStatus->status, [OrderStatusEnum::CANCELLED->value, OrderStatusEnum::DELIVERED->value])
+        ){
+            $driver = Driver::find($currentOrderStatus->driver_id);
+
+            if ($driver) {
+                $driver->is_available = true;
+                $driver->save();
+            }
+
+        }
+
+        return $statusUpdate;
     }
 
 }
