@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->json('home_location_point')->nullable();
             $table->float('driving_radius_miles')->nullable();
+            $table->tinyInteger('is_available')->default(1);
             $table->timestamps();
         });
     }

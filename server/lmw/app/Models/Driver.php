@@ -21,7 +21,7 @@ class Driver extends Authenticatable
     /**
      * @var string[]
      */
-    protected $fillable = ['driving_radius_miles'];
+    protected $fillable = ['driving_radius_miles', 'is_available'];
 
     /**
      * @var string[]

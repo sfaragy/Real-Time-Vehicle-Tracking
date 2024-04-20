@@ -83,11 +83,7 @@ class AssignDriverToOrderCommand extends Command
 
     private function getDriver(): self
     {
-        $excludedStatuses = [OrderStatusEnum::ASSIGNED->value];
-
-        $this->driversSubquery = Driver::whereDoesntHave('orderStatus', function ($query) use ($excludedStatuses) {
-            $query->whereIn('status', $excludedStatuses);
-        });
+        $this->driversSubquery = Driver::where('is_available', true);
 
         return $this;
     }
@@ -108,6 +104,9 @@ class AssignDriverToOrderCommand extends Command
             $orderStatus->driver_id = $driver->id;
             $orderStatus->status = OrderStatusEnum::ASSIGNED->value;
             $orderStatus->save();
+
+            $driver->is_available = false;
+            $driver->save();
 
             $this->info("Driver {$driver->id} assigned to order {$order->id}");
         }
