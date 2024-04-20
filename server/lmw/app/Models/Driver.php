@@ -33,7 +33,7 @@ class Driver extends Authenticatable
     /**
      * @return HasMany
      */
-    public function orderStatuses(): HasMany
+    public function orderStatus(): HasMany
     {
         return $this->hasMany(OrderStatus::class);
     }
