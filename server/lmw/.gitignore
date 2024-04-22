@@ -19,3 +19,5 @@ yarn-error.log
 /.vscode
 storage/logs
 .env.testing
+supervisord.log
+/supervisord.pid

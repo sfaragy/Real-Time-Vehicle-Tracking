@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->command('app:assign-drivers-to-orders')->everyTenSeconds();
+        $schedule->command('app:assign-driver-to-order')->everyTenSeconds();
     }
 
     /**

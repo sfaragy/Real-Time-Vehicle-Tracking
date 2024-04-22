@@ -132,3 +132,9 @@ exec "$@"
 ```
    entrypoint: /usr/local/bin/docker-php-entrypoint-dev
 ```
+
+
+# to run the schedule cronjob, now I have added it to Dockerfile to run automatically for local environment.
+```
+php artisan schedule:run
+```

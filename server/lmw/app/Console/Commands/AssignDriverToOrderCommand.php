@@ -26,17 +26,22 @@ class AssignDriverToOrderCommand extends Command
 
     public function handle(): string
     {
+        Log::info('Scheduled task started: AssignDriverToOrderCommand');
         try {
             $this->unAssignedOrdersQuery()
                 ->findOrders()
                 ->getDriver()
                 ->assignDriver();
 
+            Log::info('Scheduled task Completed: AssignDriverToOrderCommand');
+
             return CommandAliasEnum::SUCCESS->value;
         } catch (Exception $e) {
+            Log::error('Scheduled task failed: ' . $e->getMessage());
             $this->logError($e);
             return CommandAliasEnum::FAILURE->value;
         }
+
     }
 
     public function unAssignedOrdersQuery(): self
@@ -88,7 +93,10 @@ class AssignDriverToOrderCommand extends Command
         return $this;
     }
 
-    private function assignDriver()
+    /**
+     * @return self
+     */
+    private function assignDriver(): self
     {
         $inactiveDrivers = $this->driversSubquery->get();
 
@@ -116,5 +124,7 @@ class AssignDriverToOrderCommand extends Command
         } else if ($this->ordersNeedToAssign->isEmpty()) {
             $this->info('No orders without an assigned driver found.');
         }
+
+        return $this;
     }
 }
