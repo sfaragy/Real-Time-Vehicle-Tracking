@@ -5,12 +5,12 @@ namespace App\Console\Commands;
 use App\Enum\CommandAliasEnum;
 use App\Enum\OrderStatusEnum;
 use App\Models\Driver;
-use App\Models\Order;
 use App\Models\OrderStatus;
-use Illuminate\Console\Command;
+use Carbon\Carbon;
 use Exception;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Log;
 
 class AssignDriverToOrderCommand extends Command
 {
@@ -53,17 +53,26 @@ class AssignDriverToOrderCommand extends Command
 
     public function findOrders(): self
     {
+        $now = Carbon::now();
+        $oneHourAgo = $now->copy()->subHour();
         $chunkSize = $this->option('chunk-size') ?: self::CHUNK_SIZE;
 
-        Order::whereHas('orderStatus', function ($query) {
-            $query->where('status', OrderStatusEnum::INITIATED->value);
-        })
-            ->with(['orderStatus' => function ($query) {
-                $query->where('status', OrderStatusEnum::INITIATED->value);
-            }])
+        $excludedOrderIds = OrderStatus::where('created_at', '>=', $oneHourAgo)
+            ->where('created_at', '<=', $now)
+            ->whereIn('status', [
+                OrderStatusEnum::ASSIGNED->value,
+                OrderStatusEnum::CANCELLED->value,
+                OrderStatusEnum::DELIVERED->value,
+            ])
+            ->pluck('order_id')->unique();
+
+        OrderStatus::where('created_at', '>=', $oneHourAgo)
+            ->where('created_at', '<=', $now)
+            ->whereNotIn('order_id', $excludedOrderIds)
+            ->where('status', OrderStatusEnum::INITIATED->value)
             ->chunkById($chunkSize, function (Collection $orders) {
                 $this->ordersNeedToAssign = $this->ordersNeedToAssign->merge($orders);
-            }, 'id');
+            }, 'order_id');
 
         return $this;
     }
@@ -101,14 +110,14 @@ class AssignDriverToOrderCommand extends Command
         $inactiveDrivers = $this->driversSubquery->get();
 
         foreach ($inactiveDrivers as $driver) {
-            $order = $this->ordersNeedToAssign->shift();
+            $currentOrderStatus = $this->ordersNeedToAssign->shift();
 
-            if (!$order) {
+            if (!$currentOrderStatus) {
                 break;
             }
 
             $orderStatus = new OrderStatus();
-            $orderStatus->order_id = $order->id;
+            $orderStatus->order_id = $currentOrderStatus->order_id;
             $orderStatus->driver_id = $driver->id;
             $orderStatus->status = OrderStatusEnum::ASSIGNED->value;
             $orderStatus->save();
@@ -116,7 +125,7 @@ class AssignDriverToOrderCommand extends Command
             $driver->is_available = false;
             $driver->save();
 
-            $this->info("Driver {$driver->id} assigned to order {$order->id}");
+            $this->info("Driver {$driver->id} assigned to order {$currentOrderStatus->order_id}");
         }
 
         if ($inactiveDrivers->isEmpty()) {

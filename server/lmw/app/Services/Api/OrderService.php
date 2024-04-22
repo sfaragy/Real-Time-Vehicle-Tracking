@@ -7,6 +7,7 @@ use App\Models\Driver;
 use App\Models\Order;
 use App\Models\OrderStatus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class OrderService
 {
@@ -91,12 +92,14 @@ class OrderService
 
         $currentOrderStatus = $this->getOrderStatus($order_id);
 
+        $driverId = $currentOrderStatus->driver_id ?? null;
+
         $statusUpdate = false;
 
         if(in_array($currentOrderStatus->status, [OrderStatusEnum::INITIATED->value, OrderStatusEnum::ASSIGNED->value])){
             OrderStatus::create([
                 'order_id' => $order_id,
-                'driver_id' => $currentOrderStatus->driver_id,
+                'driver_id' => $driverId,
                 'status' => $request->status,
             ]);
 
@@ -108,9 +111,10 @@ class OrderService
             in_array($request->status, [OrderStatusEnum::CANCELLED->value, OrderStatusEnum::DELIVERED->value]) ||
             in_array($currentOrderStatus->status, [OrderStatusEnum::CANCELLED->value, OrderStatusEnum::DELIVERED->value])
         ){
-            $driver = Driver::find($currentOrderStatus->driver_id);
+            $driver = Driver::find($driverId);
 
             if ($driver) {
+                Log::info($driver);
                 $driver->is_available = true;
                 $driver->save();
             }
