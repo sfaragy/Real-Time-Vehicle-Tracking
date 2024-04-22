@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RealTimeController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\DriverController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -54,4 +55,9 @@ Route::prefix('order')->group(function () {
     Route::get('/{id}', [OrderController::class, 'getOrder']);
     Route::get('/status/{id}', [OrderController::class, 'getOrderStatus']);
     Route::post('/update-status/{id}', [OrderController::class, 'addOrderStatus']);
+});
+
+Route::prefix('driver')->group(function () {
+    Route::post('/', [DriverController::class, 'create']);
+    Route::get('/status/{id}', [DriverController::class, 'getDriverStatus']);
 });
