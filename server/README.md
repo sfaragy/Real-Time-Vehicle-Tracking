@@ -10,6 +10,8 @@ Nginx
 
 MongoDB is running in a different container as per my exercise. If anyone want to add it in the same project then please add the following in docker-compose.yml
 
+Later postponed and decided to use postgreSQL. Please follow the docker-compose.yml only
+
 ```
   mongo:
     image: mongo:latest
@@ -135,6 +137,26 @@ exec "$@"
 
 
 # to run the schedule cronjob, now I have added it to Dockerfile to run automatically for local environment.
+
+In the latest update this part tackled automatically with shell scripts. 
 ```
 php artisan schedule:run
 ```
+# ------- V2 please follow the following steps to run the project -------
+The goal of this API to handle and process orders where automatically assign available drivers to complete the job.
+
+## Necessary steps before test the api
+Copy the repository and change the directory to the project.
+Please copy the .env configuration for your local environment that I will provide manually.
+
+Please run the following command to start the project in local environment.
+```
+make build
+make start
+make app-login
+composer install
+php artisan migrate
+php artisan db:seed
+```
+
+To test the project with PostMan, exported json setup will be provided manually.
