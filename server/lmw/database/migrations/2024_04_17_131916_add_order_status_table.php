@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('order_status', function (Blueprint $table) {
-          $table->id();
-          $table->unsignedBigInteger('order_id');
-          $table->unsignedBigInteger('driver_id')->nullable();
-          $table->enum('status', ['Initiated', 'Assigned', 'Delivered', 'Cancelled'])->default('Initiated');
-          $table->timestamps();
-          $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
-       });
+        if (!Schema::hasTable('order_status')) {
+            Schema::create('order_status', function (Blueprint $table) {
+                $table->id();
+                $table->unsignedBigInteger('order_id');
+                $table->unsignedBigInteger('driver_id')->nullable();
+                $table->enum('status', ['Initiated', 'Assigned', 'Delivered', 'Cancelled'])->default('Initiated');
+                $table->timestamps();
+                $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            });
+        }
     }
 
     /**

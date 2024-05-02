@@ -34,13 +34,16 @@ RUN echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.
 RUN pecl install redis \
     && docker-php-ext-enable redis
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
 COPY ./lmw/ .
 
-#RUN composer dump-autoload -o \
-#    && chown -R :www-data /var/www/html \
-#    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
+#RUN chown -R www-data:www-data /var/www/html \
+#    && chmod -R 755 /var/www/html \
+#    && chmod -R 755 /var/www/html/storage \
+#    && chmod -R 755 /var/www/html/bootstrap/cache
+#
+#USER www-data
+
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 RUN composer install
 
