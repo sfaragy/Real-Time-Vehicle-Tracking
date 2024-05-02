@@ -1,6 +1,8 @@
-.PHONY: build stop start seed logs app-login migrate keygenerate restart seed
+.PHONY: build stop start seed logs app-login migrate keygenerate restart seed composer-install
 
-build: stop
+build: build-image start composer-install create-env-files set-storage-permission stop
+
+build-image: stop
 	docker-compose -f docker-compose.yml build
 
 stop:
@@ -11,21 +13,23 @@ start: stop
 
 restart: stop start
 
-logs: 
-	docker-compose -f docker-compose.yml server_web_1 storage/logs --tail=10 -f $(c)
+logs:
+	docker exec server_web_1 storage/logs --tail=10 -f $(c)
 
 app-login:
 	docker exec -it server_web_1 /bin/bash
 
-migrate:
-	docker-compose run server_web_1 php artisan migrate
+migrate: start migrate-db seed
+
+migrate-db:
+	docker exec server_web_1 php artisan migrate
 
 seed:
-	docker-compose run server_web_1 php artisan migrate:refresh --seed
+	docker exec server_web_1 php artisan migrate:refresh --seed
 
 
 keygenerate:
-	docker-compose exec server_web_1 php artisan key:generate
+	docker exec server_web_1 php artisan key:generate
 
 redis-login:
 	docker exec -it server_redis_1 redis-cli
@@ -33,3 +37,14 @@ redis-login:
 add-local-host-alias:
 	sudo sed -i /lmw.local.com/d /etc/hosts
 	echo "127.0.0.1 lmw.local.com" | sudo tee -a /etc/hosts >/dev/null
+
+composer-install:
+	docker exec server_web_1 composer install
+	docker exec server_web_1 composer dump-autoload
+
+create-env-files:
+	@echo `touch .env`
+	@echo `touch .env.testing`
+
+set-storage-permission:
+	docker exec -it server_web_1 sh -c 'cd /var/www/html && chmod 777 storage -R && chmod -R 777 storage/logs && chmod -R 777 bootstrap/cache'
