@@ -1,162 +1,66 @@
 
-This is a boilerplate for a test exercise:
-``` 
-Using Laravel 11
-Mongodb
-Redis
-PHP8.3-fpm
-Nginx
-```
+# Steps to start the application
+Please run the following steps to start the project in local environment.
 
-MongoDB is running in a different container as per my exercise. If anyone want to add it in the same project then please add the following in docker-compose.yml
+## Prerequisites: (Please ignore if all packages are already installed)
+1. Please install make if it is not installed in your system: 
+   1. Ubuntu:
+   ```
+   sudo apt update
+   sudo apt-get install make
+   ```
+   2. CentOs:
+   ```
+   yum install make
+   ```
+   3. MacOs
+   ```
+   brew install make
+   ```
+2. Please install docker and docker-compose:
 
-Later postponed and decided to use postgreSQL. Please follow the docker-compose.yml only
+   https://docs.docker.com/engine/install/
 
-```
-  mongo:
-    image: mongo:latest
-    ports:
-      - '27017:27017'
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - my-network
+   https://docs.docker.com/compose/install/
 
-volumes:
-  mongo-data:
-```
-
-To build the application:
-``` make build ```
-
-To start the application:
-``` make start ```
-
-App URL: lmw.local.com / localhost
-
-add this to the hosts file in your system
-
-# Test event API endpoint: (post request with json body {"message": "Test Message"})
-```
-/api/realtime-test-event
-```
-
-To test the realtime api from another next.js app:
-
-Create a folder and creat a new next.js app:
-```
-npx create-next-app my-nextjs-app
-cd my-nextjs-app
-npm install axios
-npm run dev
-```
-
-Add this following code to page.tsx
-```
-"use client"
-import { useEffect, useState } from 'react';
-
-import axios from 'axios';
-
-const RealtimePage = () => {
-
-    const [updates, setUpdates] = useState([]);
-
-    useEffect(() => {
-        const fetchUpdates = async () => {
-            try {
-                const response = await axios.post('http://lmw.local.com/api/realtime-test-event');
-                setUpdates(response.data.message);
-                console.log(response.data.message);
-            } catch (error) {
-                console.error('Error fetching updates:', error);
-            }
-        };
-
-        const interval = setInterval(fetchUpdates, 5000);
-       
-        return () => {
-            clearInterval(interval);
-        };
-
-    }, []);
-
-    return (
-        <div>
-            <h1>Real-Time Page</h1>
-            <p>
-           {updates}
-            </p>
-        </div>
-    );
-};
-
-export default RealtimePage;
-
-```
-Based on this project the endpoint is http://lmw.local.com/api/realtime-test-event but if you use your own domain alias of localhost then please update it as usual. 
-
-# In the future we can write some entrypoint files and add in Dockerfile to copy it
-```
-COPY ./docker/docker-php-* /usr/local/bin/
-RUN dos2unix /usr/local/bin/docker-php-entrypoint
-RUN dos2unix /usr/local/bin/docker-php-entrypoint-dev
-```
+## Build and run the project in docker container:
+1. Clone the repository:
+   ``` 
+   mkdir lmw
+   cd lmw
+   git clone git@github.com:teamups-dev/teamups-tech-x-65c51a54060226c992f285aa-65c549fc060226c992f285b4-661977a1268087ffb90acc07.git
+   ```
+2. Checkout to the following branch:
+   ``` 
+   git checkout -b lmw-exercise-sf-logics origin/lmw-exercise-sf-logics
+   git pull
+   ```
+3. Change control to the server:
+   ``` 
+   cd server
+   ```
+4. Build docker images:
+   
+   ```
+   make build 
+   ```
+5. Two env files will create automatically in the server/lmw/ directory. Copy content to the env files respectively from private google drive. ```https://drive.google.com/drive/folders/1FbAwkREp9yBnojInmMsOjw62kInR3vWt```
+   1. .env
+   2. .env.testing
 
 
-# Example: docker-php-entrypoint-dev
+6. Migrate and seed initial database:
 
-```
-#!/bin/sh
-set -e
-
-# run last minute build tools just for local dev
-# this file should just be used to override on local dev in a compose file
-
-# run default entrypoint first
-/usr/local/bin/docker-php-entrypoint
-
-# ensure bind mount permissions are what we need
-chown -R :www-data /var/www/http
-
-chmod -R 775 /var/www/http/storage /var/www/http/bootstrap/cache
-  
-# run last minute build tools just for local dev
-cd /var/www/http
-composer dump-autoload
-cd /var/www/http/public
-
-exec "$@"
-```
-
-# In docker-compose we have to add the following line to add this entrypoint in PHP container
-
-```
-   entrypoint: /usr/local/bin/docker-php-entrypoint-dev
-```
-
-
-# to run the schedule cronjob, now I have added it to Dockerfile to run automatically for local environment.
-
-In the latest update this part tackled automatically with shell scripts. 
-```
-php artisan schedule:run
-```
-# ------- V2 please follow the following steps to run the project -------
-The goal of this API to handle and process orders where automatically assign available drivers to complete the job.
-
-## Necessary steps before test the api
-Copy the repository and change the directory to the project.
-Please copy the .env configuration for your local environment that I will provide manually.
-
-Please run the following command to start the project in local environment.
-```
-make build
-make start
-make app-login
-composer install
-php artisan migrate
-php artisan db:seed
-```
+   ```
+   make migrate
+   ```
+7. Give permission to the storage logs and cache:
+   ```
+   make set-storage-permission
+   ```
+7. Now the environment will be ready to accept HTTP requests. API host:
+   http://localhost/
+   or
+   http://lmw.local.com/
 
 To test the project with PostMan, exported json setup will be provided manually.
