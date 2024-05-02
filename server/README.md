@@ -28,10 +28,10 @@ Please run the following steps to start the project in local environment.
    ``` 
    mkdir lmw
    cd lmw
-   git clone git@github.com:teamups-dev/teamups-tech-x-65c51a54060226c992f285aa-65c549fc060226c992f285b4-661977a1268087ffb90acc07.git
+   git clone git@github.com:teamups-dev/teamups-tech-x-65c51a54060226c992f285aa-65c549fc060226c992f285b4-661977a1268087ffb90acc07.git .
    ```
 2. Checkout to the following branch:
-   ``` 
+   ```
    git checkout -b lmw-exercise-sf-logics origin/lmw-exercise-sf-logics
    git pull
    ```
