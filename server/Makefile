@@ -13,7 +13,7 @@ start: stop
 
 restart: stop start
 
-logs: 
+logs:
 	docker exec server_web_1 storage/logs --tail=10 -f $(c)
 
 app-login:

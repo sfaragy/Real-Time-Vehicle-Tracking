@@ -1,23 +1,34 @@
 
-# Steps to start the application
-Please run the following steps to start the project in local environment.
+This is a boilerplate for a test exercise:
+``` 
+Using Laravel 11
+Mongodb
+Redis
+PHP8.3-fpm
+Nginx
+```
 
-## Prerequisites: (Please ignore if all packages are already installed)
-1. Please install make if it is not installed in your system: 
-   1. Ubuntu:
-   ```
-   sudo apt update
-   sudo apt-get install make
-   ```
-   2. CentOs:
-   ```
-   yum install make
-   ```
-   3. MacOs
-   ```
-   brew install make
-   ```
-2. Please install docker and docker-compose:
+MongoDB is running in a different container as per my exercise. If anyone want to add it in the same project then please add the following in docker-compose.yml
+
+```
+  mongo:
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - my-network
+
+volumes:
+  mongo-data:
+```
+
+To build the application:
+``` make build ```
+
+To start the application:
+``` make start ```
 
    https://docs.docker.com/engine/install/
 
@@ -32,7 +43,7 @@ Please run the following steps to start the project in local environment.
    ```
 2. Checkout to the following branch:
    ```
-   git checkout -b lmw-exercise-sf-logics origin/lmw-exercise-sf-logics
+   git checkout -b lmw-exercise-sf-base origin/lmw-exercise-sf-base
    git pull
    ```
 3. Change control to the server:
@@ -40,13 +51,13 @@ Please run the following steps to start the project in local environment.
    cd server
    ```
 4. Build docker images:
-   
+
    ```
    make build 
    ```
 5. Two env files will create automatically in the server/lmw/ directory. Copy content to the env files respectively from private google drive. ```https://drive.google.com/drive/folders/1FbAwkREp9yBnojInmMsOjw62kInR3vWt```
-   1. .env
-   2. .env.testing
+    1. .env
+    2. .env.testing
 
 
 6. Migrate and seed initial database:
@@ -54,7 +65,7 @@ Please run the following steps to start the project in local environment.
    ```
    make migrate
    ```
-7. Give permission to the storage logs and cache:: (If any permission error appears)
+7. Give permission to the storage logs and cache: (If any permission error appears)
    ```
    make set-storage-permission
    ```
