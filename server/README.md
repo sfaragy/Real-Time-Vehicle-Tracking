@@ -43,7 +43,7 @@ To start the application:
    ```
 2. Checkout to the following branch:
    ```
-   git checkout -b lmw-exercise-sf-base origin/lmw-exercise-sf-base
+   git checkout -b lmw-exercise-sf-base origin/lmw-exercise-sf-logics
    git pull
    ```
 3. Change control to the server:
