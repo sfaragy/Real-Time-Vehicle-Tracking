@@ -54,7 +54,7 @@ Please run the following steps to start the project in local environment.
    ```
    make migrate
    ```
-7. Give permission to the storage logs and cache:
+7. Give permission to the storage logs and cache:: (If any permission error appears)
    ```
    make set-storage-permission
    ```
