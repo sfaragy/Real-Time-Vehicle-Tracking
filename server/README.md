@@ -49,9 +49,10 @@ Please run the following steps to start the project in local environment.
     2. .env.testing
 
 
-6. Migrate and seed initial database:
+6. Create, Migrate and seed initial database:
 
    ```
+   make create-db
    make migrate
    ```
 7. Give permission to the storage logs and cache: (If any permission error appears)
