@@ -48,3 +48,12 @@ create-env-files:
 
 set-storage-permission:
 	docker exec -it server_web_1 sh -c 'cd /var/www/html && chmod 777 storage -R && chmod -R 777 storage/logs && chmod -R 777 bootstrap/cache'
+
+create-db:
+	@echo "Prepare container to use DB..."
+	docker-compose -f docker-compose.yml up -d db
+	@echo "Wait until mysql docker image up and running?"
+	while [ $$(docker inspect --format "{{json .State.Status }}" $$(docker-compose -f docker-compose.yml ps -q db)) != "\"running\"" ]; do printf "."; sleep 1; done
+
+	@echo "Drop DB if exists"
+	docker exec -it lmw_pgs sh -c 'psql -U lmw_pgs -W -c "CREATE DATABASE lmw_pgs;"'
