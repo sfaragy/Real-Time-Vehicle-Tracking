@@ -1,8 +1,8 @@
-# Teamups Technical Exercise (back-end focus)
+# Base Instruction:
+For backend please follow the instruction in README.md file in the directory: Server
+Frontend is a basic frontend and main goal was to run the realtime dirver and food delivery tracking system. Which accomplished with minimal test coverage. This system willrun in docker container. 
 
 ## Intro
-
-Introduction video: https://drive.google.com/file/d/1KlPYZfZEVaBqDU0AbiXGgz_zmAV-Lhl3/view?usp=drive_link
 
 Built with `create-next-app`, this is a NextJS food delivery-related app for real-time streaming.
 
