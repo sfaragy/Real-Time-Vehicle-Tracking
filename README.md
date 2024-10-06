@@ -1,8 +1,33 @@
 # Base Instruction:
-For backend please follow the instruction in README.md file in the directory: Server
-Frontend is a basic frontend and main goal was to run the realtime dirver and food delivery tracking system. Which accomplished with minimal test coverage. This system willrun in docker container. 
+1.For backend please follow the instruction in README.md file in the directory: Server
 
-## Intro
+2. A basic frontend will interact with the realtime backend.
+   
+3. Main goal was to run the realtime dirver and food delivery tracking system. Which accomplished with minimal test cover. This system will run in docker container.
+
+## How to run the frontend?:
+1. Clone the repository. and CD into repository root directory
+2. Run the command in root Dirtectory to build the frontend nextjs 14 app: ``` docker-compose up --build ```
+3. Run frontend: ``` docker-compose up -d ```
+4. Frontend will run in: http://localhost:3000
+
+
+## How to run the backend?:
+1. Change the directory to server ```cd server```
+2. Run the command to build the Larvel based realtime backend: ``` docker-compose up --build ```
+3. Run Realtime backend: ``` docker-compose up -d ```  or follow the instruction inside the directory <b>server<b>
+4. Backend will run in: http://lmw.local.com or http://localhost
+5. (Project will run smoothly in ubuntu / linux but need little pro knoledge to run in MacOS or Windows)
+6. A linux user with dependent package already install can run the Make command in Makefile.
+
+   Note: for backend please makesure that you have created the database before you run the project. Database container also running that can be easily access visa CLI or tools like DbEaver / MySQL workbench. 
+
+
+
+
+
+## ----- Root project was a test for a senior position and the responsibility to ensure a realtime backend system + integrate with frontend ------
+## Intro -- from main project ----
 
 Built with `create-next-app`, this is a NextJS food delivery-related app for real-time streaming.
 
