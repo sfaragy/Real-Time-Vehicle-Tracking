@@ -5,6 +5,9 @@
    
 3. Main goal was to run the realtime dirver and food delivery tracking system. Which accomplished with minimal test cover. This system will run in docker container.
 
+## Need to make sure the git branch is "lmw-exercise-sf-logics" after clone the repository. Because it contains all updates
+Run the command ```git checkout lmw-exercise-sf-logics```
+
 ## How to run the frontend?:
 1. Clone the repository. and CD into repository root directory
 2. Run the command in root Dirtectory to build the frontend nextjs 14 app: ``` docker-compose up --build ```
